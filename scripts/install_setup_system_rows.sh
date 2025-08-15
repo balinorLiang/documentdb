@@ -26,7 +26,7 @@ mkdir postgres-repo-for-system-rows
 cd postgres-repo-for-system-rows
 
 git init
-git remote add origin https://github.com/postgres/postgres
+git remote add origin https://github.com/IvorySQL/IvorySQL
 
 # checkout to the commit specified in the cgmanifest.json
 git fetch --depth 1 origin "$POSTGRESQL_REF"
