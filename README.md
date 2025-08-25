@@ -144,7 +144,7 @@ singleDocumentReadResult = quickStartCollection.find_one({'name': 'John Doe'})
 
 ```
 
-Step 8: Run aggregation pipeline query
+Step 8: Run aggregation pipeline operation
 
 ```python
 
@@ -164,7 +164,7 @@ for eachDocument in results:
 
 ```
 
-## To interact directly with the PostgreSQL layer
+### Helpful Links
 
 ### Pre-requisite
 
