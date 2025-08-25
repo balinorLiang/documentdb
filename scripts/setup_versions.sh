@@ -8,11 +8,11 @@ set -e
 # declare all the versions of dependencies
 LIBBSON_VERSION=1.28.0
 # This maps to REL_17_4:f8554dee417ffc4540c94cf357f7bf7d4b6e5d80
-POSTGRES_17_REF="IvorySQL_4.5"
+IvorySQL_4_REF="IvorySQL_4.5"
 # This maps to REL_16_8:71eb35c0b18de96537bd3876ec9bf8075bfd484f
-POSTGRES_16_REF="IvorySQL_3.4"
+IvorySQL_3_REF="IvorySQL_3.4"
 # This maps to REL15_12:50d3d22baba63613d1f1406b2ed460dc9b03c3fc
-POSTGRES_15_REF="Ivory_REL_2_3"
+IvorySQL_2_REF="Ivory_REL_2_3"
 # This is commit f3cb3d99eed7dd3db82104ab2a4a13b1233d0023
 CITUS_VERSION=v12.1.7
 # This is commit d28a5eae6c78935313824d319480632783d48d10
@@ -31,15 +31,15 @@ UNCRUSTIFY_VERSION=uncrustify-0.68.1
 
 function GetPostgresSourceRef()
 {
-  local pgVersion=$1
-  if [ "$pgVersion" == "17" ]; then
-    echo $POSTGRES_17_REF
-  elif [ "$pgVersion" == "16" ]; then
-    echo $POSTGRES_16_REF
-  elif [ "$pgVersion" == "15" ]; then
-    echo $POSTGRES_15_REF
+  local ivyVersion=$1
+  if [ "$ivyVersion" == "4" ]; then
+    echo $IvorySQL_4_REF
+  elif [ "$ivyVersion" == "3" ]; then
+    echo $IvorySQL_3_REF
+  elif [ "$ivyVersion" == "2" ]; then
+    echo $IvorySQL_2_REF
   else
-    echo "Invalid PG Version specified $pgVersion";
+    echo "Invalid PG Version specified $ivyVersion";
     exit 1;
   fi
 }
@@ -47,7 +47,7 @@ function GetPostgresSourceRef()
 function GetCitusVersion()
 {
   local citusVersion=$1
-  if [ "$PGVERSION" == "17" ]; then
+  if [ "$IVORYVERSION" == "4" ]; then
     echo $CITUS_13_VERSION
   elif [ "$citusVersion" == "13" ] || [ "$citusVersion" == "v13.0" ] || [ "$citusVersion" == "$CITUS_13_VERSION" ]; then
     echo $CITUS_13_VERSION

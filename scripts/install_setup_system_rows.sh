@@ -17,7 +17,7 @@ done
 scriptDir="$( cd -P "$( dirname "$source" )" && pwd )"
 . $scriptDir/utils.sh
 . $scriptDir/setup_versions.sh
-POSTGRESQL_REF=$(GetPostgresSourceRef $PGVERSION)
+POSTGRESQL_REF=$(GetPostgresSourceRef $IVORYVERSION)
 
 pushd $INSTALL_DEPENDENCIES_ROOT
 
@@ -32,7 +32,7 @@ git remote add origin https://github.com/IvorySQL/IvorySQL
 git fetch --depth 1 origin "$POSTGRESQL_REF"
 git checkout FETCH_HEAD
 
-pgBinDir=$(GetPostgresPath $PGVERSION)
+pgBinDir=$(GetPostgresPath $IVORYVERSION)
 PATH=$pgBinDir:$PATH;
 
 echo "building and installing tsm_system_rows extension with pg path $pgBinDir ..."

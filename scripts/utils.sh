@@ -21,43 +21,37 @@ trap 'error ${LINENO}' ERR
 
 function GetPostgresPath()
 {
-  local pgVersion=$1
-  local osVersion=$(cat /etc/os-release | grep "^ID=");
-
-  if [[ "$osVersion" == "ID=ubuntu" || "$osVersion" == "ID=debian"|| "$osVersion" == "ID=mariner" || "$osVersion" == "ID=azurelinux" ]]; then
-    echo "/usr/lib/postgresql/$pgVersion/bin"
-  else
-    echo "/usr/pgsql-$pgVersion/bin"
-  fi
+  local ivyVersion=$1
+  echo "/var/local/ivorysql/ivory-$ivyVersion/bin"
 }
 
 function GetPostgresSourceRef()
 {
-  local pgVersion=$1
-  if [ "$pgVersion" == "16" ]; then
+  local ivyVersion=$1
+  if [ "$ivyVersion" == "3" ]; then
     # This maps to REL_16_2:b78fa8547d02fc72ace679fb4d5289dccdbfc781
-    POSTGRESQL_REF="IvorySQL_3.4"
-  elif [ "$pgVersion" == "15" ]; then
+    IvorySQL_REF="IvorySQL_3.4"
+  elif [ "$ivyVersion" == "2" ]; then
     # This maps to REL15_3:8382864eb5c9f9ebe962ac20b3392be5ae304d23
-    POSTGRESQL_REF="Ivory_REL_2_3"
+    IvorySQL_REF="Ivory_REL_2_3"
   else
-    echo "Invalid PG Version specified $pgVersion";
+    echo "Invalid PG Version specified $ivyVersion";
     exit 1;
   fi
 
-  echo $POSTGRESQL_REF
+  echo $IvorySQL_REF
 }
 
 function GetPGCTL()
 {
-  local pgVersion=${PG_VERSION:-16}
-  echo ${pgctlPath:-$(GetPostgresPath $pgVersion)/pg_ctl}
+  local ivyVersion=${IVY_VERSION:-4}
+  echo ${pgctlPath:-$(GetPostgresPath $ivyVersion)/pg_ctl}
 }
 
 function GetInitDB()
 {
-  local pgVersion=${PG_VERSION:-16}
-  echo $(GetPostgresPath $pgVersion)/initdb
+  local ivyVersion=${IVY_VERSION:-4}
+  echo $(GetPostgresPath $ivyVersion)/initdb
 }
 
 function StopServer()
@@ -106,7 +100,7 @@ function InitDatabaseExtended()
   local _directory=$1
   local _preloadLibraries=$2
 
-  echo "Initializing PostgreSQL database in $_directory with preload libraries: $_preloadLibraries"
+  echo "Initializing IvorySQL database in $_directory with preload libraries: $_preloadLibraries"
 
   if [ -d "$_directory" ]; then
     echo "Removing contents of $_directory"

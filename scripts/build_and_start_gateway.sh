@@ -84,21 +84,21 @@ while [[ -L $source ]]; do
 done
 scriptDir="$(cd -P "$(dirname "$source")" && pwd)"
 
-# Check if PostgreSQL is running with a timeout of 10 minutes
+# Check if IvorySQL is running with a timeout of 10 minutes
 timeout=600
 interval=5
 elapsed=0
 
-echo "Waiting for PostgreSQL to be ready on $hostname:$port..."
+echo "Waiting for IvorySQL to be ready on $hostname:$port..."
 while ! pg_isready -h "$hostname" -p "$port" > /dev/null 2>&1; do
     if [ "$elapsed" -ge "$timeout" ]; then
-        echo "PostgreSQL did not become ready within 10 minutes. Exiting."
+        echo "IvorySQL did not become ready within 10 minutes. Exiting."
         exit 1
     fi
     sleep "$interval"
     elapsed=$((elapsed + interval))
 done
-echo "PostgreSQL is ready."
+echo "IvorySQL is ready."
 
 if [ "$clean" = "true" ]; then
     echo "Cleaning the build directory..."

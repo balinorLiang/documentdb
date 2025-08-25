@@ -5,14 +5,14 @@ set -e
 # fail if trying to reference a variable that is not set.
 set -u
 
-postgresqlInstallDir=""
+ivorysqlInstallDir=""
 debug="false"
 cassert="false"
 help="false";
-pgVersion=""
+ivyVersion=""
 while getopts "d:hxcv:" opt; do
   case $opt in
-    d) postgresqlInstallDir="$OPTARG"
+    d) ivorysqlInstallDir="$OPTARG"
     ;;
     x) debug="true"
     ;;
@@ -20,7 +20,7 @@ while getopts "d:hxcv:" opt; do
     ;;
     h) help="true"
     ;;
-    v) pgVersion="$OPTARG"
+    v) ivyVersion="$OPTARG"
     ;;
   esac
 
@@ -34,18 +34,18 @@ while getopts "d:hxcv:" opt; do
 done
 
 if [ "$help" == "true" ]; then
-    echo "downloads postgresql-14.2 sources, build and install it."
-    echo "[-d] the directory to install postgresql to. Default: /usr/lib/postgresql/14"
+    echo "downloads IvorySQL-14.2 sources, build and install it."
+    echo "[-d] the directory to install IvorySQL to. Default: /usr/lib/IvorySQL/14"
     echo "[-x] build with debug symbols."
     exit 1;
 fi
 
-if [ -z $postgresqlInstallDir ]; then
+if [ -z $ivorysqlInstallDir ]; then
     echo "Postgres Install Directory must be specified."
     exit 1;
 fi
 
-if [ -z $pgVersion ]; then
+if [ -z $ivyVersion ]; then
   echo "PG Version must be specified";
   exit 1;
 fi
@@ -62,29 +62,29 @@ done
 scriptDir="$( cd -P "$( dirname "$source" )" && pwd )"
 
 . $scriptDir/setup_versions.sh
-POSTGRESQL_REF=$(GetPostgresSourceRef $pgVersion)
+IvorySQL_REF=$(GetPostgresSourceRef $ivyVersion)
 
 pushd $INSTALL_DEPENDENCIES_ROOT
 
-rm -rf postgres-repo/$pgVersion
-mkdir -p postgres-repo/$pgVersion
-cd postgres-repo/$pgVersion
+rm -rf postgres-repo/$ivyVersion
+mkdir -p postgres-repo/$ivyVersion
+cd postgres-repo/$ivyVersion
 
 git init
 git remote add origin https://github.com/IvorySQL/IvorySQL
 
 # checkout to the commit specified in the cgmanifest.json
-git fetch --depth 1 origin "$POSTGRESQL_REF"
+git fetch --depth 1 origin "$IvorySQL_REF"
 git checkout FETCH_HEAD
 
-echo "building and installing postgresql ref $POSTGRESQL_REF and installing to $postgresqlInstallDir..."
+echo "building and installing IvorySQL ref $IvorySQL_REF and installing to $ivorysqlInstallDir..."
 
 if [ "$debug" == "true" ]; then
-  ./configure --enable-debug --enable-cassert --enable-tap-tests CFLAGS="-ggdb -Og -g3 -fno-omit-frame-pointer" --with-openssl --prefix="$postgresqlInstallDir" --with-icu
+  ./configure --enable-debug --enable-cassert --enable-tap-tests CFLAGS="-ggdb -Og -g3 -fno-omit-frame-pointer" --with-openssl --prefix="$ivorysqlInstallDir" --with-icu
 elif [ "$cassert" == "true" ]; then
-  ./configure --enable-debug --enable-cassert --enable-tap-tests --with-openssl --prefix="$postgresqlInstallDir" --with-icu
+  ./configure --enable-debug --enable-cassert --enable-tap-tests --with-openssl --prefix="$ivorysqlInstallDir" --with-icu
 else
-  ./configure --enable-debug --enable-tap-tests --with-openssl --prefix="$postgresqlInstallDir" --with-icu
+  ./configure --enable-debug --enable-tap-tests --with-openssl --prefix="$ivorysqlInstallDir" --with-icu
 fi
 
 make clean && make -sj$(cat /proc/cpuinfo | grep -c "processor") install

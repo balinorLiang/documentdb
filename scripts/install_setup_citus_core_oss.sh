@@ -22,8 +22,8 @@ scriptDir="$( cd -P "$( dirname "$source" )" && pwd )"
 CITUS_REF=$(GetCitusVersion $citusVersion)
 
 . $scriptDir/utils.sh
-if [ "${PGVERSION:-}" != "" ]; then
-    pgPath=$(GetPostgresPath $PGVERSION)
+if [ "${IVORYVERSION:-}" != "" ]; then
+    pgPath=$(GetPostgresPath $IVORYVERSION)
     PATH=$pgPath:$PATH
 fi
 

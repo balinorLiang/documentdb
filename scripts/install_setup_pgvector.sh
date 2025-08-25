@@ -18,7 +18,7 @@ scriptDir="$( cd -P "$( dirname "$source" )" && pwd )"
 echo "scriptDir: $scriptDir"
 
 . $scriptDir/utils.sh
-pgBinDir=$(GetPostgresPath $PGVERSION)
+pgBinDir=$(GetPostgresPath $IVORYVERSION)
 PATH=$pgBinDir:$PATH;
 
 . $scriptDir/setup_versions.sh
