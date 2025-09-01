@@ -1,6 +1,8 @@
 # Introduction
 
-`DocumentDB` is the engine powering vCore-based Azure Cosmos DB for MongoDB. It offers a native implementation of document-oriented NoSQL database, enabling seamless CRUD operations on BSON data types within a PostgreSQL framework. Beyond basic operations, DocumentDB empowers you to execute complex workloads, including full-text searches, geospatial queries, and vector embeddings on your dataset, delivering robust functionality and flexibility for diverse data management needs.
+`ivydocumentdb` is an open-source project developed based on Microsoft DocumentDB and compatible with IvorySQL. It offers a native implementation of document-oriented NoSQL database, enabling seamless CRUD (Create, Read, Update, Delete) operations on BSON(Binary JSON) data types within an IvorySQL framework. Beyond basic operations, ivydocumentdb empowers you to execute complex workloads, including full-text searches, geospatial queries, and vector embeddings on your dataset, delivering robust functionality and flexibility for diverse data management needs.
+
+[IvorySQL](https://docs.ivorysql.org/en/ivorysql-doc) is advanced, fully featured, open source Oracle compatible PostgreSQL with a firm commitment to always remain 100% compatible and a Drop-in replacement of the latest PostgreSQL.
 
 [PostgreSQL](https://www.postgresql.org/about/) is a powerful, open source object-relational database system that uses and extends the SQL language combined with many features that safely store and scale the most complicated data workloads.
 
@@ -38,16 +40,16 @@ By building on PostgreSQL, DocumentDB leverages these strengths to provide a pow
 
 ### Building DocumentDB with Docker
 
-Step 1: Clone the DocumentDB repo.
+Step 1: Clone the ivydocumentdb repo.
 
 ```bash
-git clone https://github.com/microsoft/documentdb.git
+git clone https://github.com/ivorysql/ivydocumentdb.git
 ```
 
 Step 2: Create the docker image. Navigate to cloned repo.
 
 ```bash
-docker build . -f .devcontainer/Dockerfile -t documentdb 
+docker build . -f .devcontainer/Dockerfile -t ivydocumentdb 
 ```
 
 Note: Validate using `docker image ls`
@@ -55,7 +57,7 @@ Note: Validate using `docker image ls`
 Step 3: Run the Image as a container
 
 ```bash
-docker run -v $(pwd):/home/documentdb/code -it documentdb /bin/bash 
+docker run -v $(pwd):/home/documentdb/code -it ivydocumentdb /bin/bash 
 
 cd code
 ```
@@ -78,36 +80,6 @@ sudo make install
 Note: To run backend postgresql tests after installing you can run `make check`.
 
 You are all set to work with DocumentDB.
-
-### Using the Prebuilt Docker Image
-
-You can use a [prebuilt docker image](https://github.com/microsoft/documentdb/pkgs/container/documentdb%2Fdocumentdb-oss/versions?filters%5Bversion_type%5D=tagged) for DocumentDB instead of building it from source.  Follow these steps:
-
-#### Pull the Prebuilt Image
-
-Pull the prebuilt image directly from the Microsoft Container Registry:
-
-```bash
-docker pull ghcr.io/microsoft/documentdb/documentdb-oss:PG16-amd64-0.105.0
-```
-
-#### Running the Prebuilt Image
-
-To run the prebuilt image, use one of the following commands:
-
-1. Run the container:
-
-```bash
-docker run -dt ghcr.io/microsoft/documentdb/documentdb-oss:PG16-amd64-0.105.0
-```
-
-2. If external access is required, run the container with parameter "-e":
-
-```bash
-docker run -p 127.0.0.1:9712:9712 -dt ghcr.io/microsoft/documentdb/documentdb-oss:PG16-amd64-0.105.0 -e
-```
-
-This will start the container and map port `9712` from the container to the host.
 
 ### Connecting to the Server
 #### Internal Access
@@ -297,16 +269,3 @@ The example presents each patient along with the doctors visited.
 ```sql
 SELECT cursorpage FROM documentdb_api.aggregate_cursor_first_page('documentdb', '{ "aggregate": "patient", "pipeline": [ { "$lookup": { "from": "appointment","localField": "patient_id", "foreignField": "patient_id", "as": "appointment" } },{"$unwind":"$appointment"},{"$project":{"_id":0,"name":1,"appointment.doctor_name":1,"appointment.appointment_date":1}} ], "cursor": { "batchSize": 3 } }');
 ```
-
-### Community
-
-- Please refer to page for contributing to our [Roadmap list](https://github.com/orgs/microsoft/projects/1407/views/1).
-- [FerretDB](https://github.com/FerretDB/FerretDB) integration allows using DocumentDB as backend engine.
-
-Contributors and users can join the [DocumentDB Discord channel in the Microsoft OSS server](https://aka.ms/documentdb_discord) for quick collaboration.
-
-### FAQs
-
-Q1. While performing `make check` if you encounter error `FATAL:  "/home/documentdb/code/pg_documentdb_core/src/test/regress/tmp/data" has wrong ownership`?
-
-Please drop the `/home/documentdb/code/pg_documentdb_core/src/test/regress/tmp/` directory and rerun the `make check`.

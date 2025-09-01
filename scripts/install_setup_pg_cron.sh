@@ -20,7 +20,7 @@ scriptDir="$( cd -P "$( dirname "$source" )" && pwd )"
 CITUS_PG_CRON_REF=$(GetPgCronVersion)
 
 . $scriptDir/utils.sh
-pgBinDir=$(GetPostgresPath $PGVERSION)
+pgBinDir=$(GetPostgresPath $IVORYVERSION)
 PATH=$pgBinDir:$PATH;
 
 pushd $INSTALL_DEPENDENCIES_ROOT
