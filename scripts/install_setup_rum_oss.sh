@@ -21,8 +21,8 @@ echo "scriptDir: $scriptDir"
 RUM_REF=$(GetRumVersion)
 
 . $scriptDir/utils.sh
-if [ "${PGVERSION:-}" != "" ]; then
-    pgPath=$(GetPostgresPath $PGVERSION)
+if [ "${IVORYVERSION:-}" != "" ]; then
+    pgPath=$(GetPostgresPath $IVORYVERSION)
     PATH=$pgPath:$PATH
 fi
 

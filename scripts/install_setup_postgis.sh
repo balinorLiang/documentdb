@@ -27,7 +27,7 @@ scriptDir="$( cd -P "$( dirname "$source" )" && pwd )"
 POSTGIS_REF=$(GetPostgisVersion)
 
 . $scriptDir/utils.sh
-pgBinDir=$(GetPostgresPath $PGVERSION)
+pgBinDir=$(GetPostgresPath $IVORYVERSION)
 
 POSTGIS_REPO=postgis-repo
 rm -rf $POSTGIS_REPO
