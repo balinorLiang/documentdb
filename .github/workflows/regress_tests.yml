@@ -27,10 +27,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        pg_version:
-          - 15
-          - 16
-          - 17
+        ivory_version:
+          - 4
         arch:
           - amd64
           - arm64
@@ -51,7 +49,7 @@ jobs:
 
       - name: Install package dependencies
         run: |
-          export PG_VERSION=${{ matrix.pg_version }}
+          export IVORY_VERSION=${{ matrix.ivory_version }}
           export CITUS_VERSION=12
 
           export LC_ALL=en_US.UTF-8
@@ -100,23 +98,23 @@ jobs:
           sudo INSTALL_DEPENDENCIES_ROOT=$INSTALL_DEPENDENCIES_ROOT MAKE_PROGRAM=cmake /tmp/install_setup/install_setup_libbson.sh
           cp ./scripts/utils.sh /tmp/install_setup
           cp ./scripts/install_setup_postgres.sh /tmp/install_setup/
-          sudo INSTALL_DEPENDENCIES_ROOT=$INSTALL_DEPENDENCIES_ROOT /tmp/install_setup/install_setup_postgres.sh -d /usr/lib/postgresql/${PG_VERSION} $POSTGRES_INSTALL_ARG -v ${PG_VERSION}
+          sudo INSTALL_DEPENDENCIES_ROOT=$INSTALL_DEPENDENCIES_ROOT /tmp/install_setup/install_setup_postgres.sh -d /var/local/ivorysql/ivory-${IVORY_VERSION} $POSTGRES_INSTALL_ARG -v ${IVORY_VERSION}
           cp ./scripts/install_setup_rum_oss.sh /tmp/install_setup/
-          sudo INSTALL_DEPENDENCIES_ROOT=$INSTALL_DEPENDENCIES_ROOT PGVERSION=$PG_VERSION /tmp/install_setup/install_setup_rum_oss.sh
+          sudo INSTALL_DEPENDENCIES_ROOT=$INSTALL_DEPENDENCIES_ROOT IVORYVERSION=$IVORY_VERSION /tmp/install_setup/install_setup_rum_oss.sh
           cp ./scripts/install_setup_citus_core_oss.sh /tmp/install_setup/
-          sudo INSTALL_DEPENDENCIES_ROOT=$INSTALL_DEPENDENCIES_ROOT PGVERSION=$PG_VERSION /tmp/install_setup/install_setup_citus_core_oss.sh ${CITUS_VERSION}
+          sudo INSTALL_DEPENDENCIES_ROOT=$INSTALL_DEPENDENCIES_ROOT IVORYVERSION=$IVORY_VERSION /tmp/install_setup/install_setup_citus_core_oss.sh ${CITUS_VERSION}
           cp ./scripts/install_citus_indent.sh /tmp/install_setup/
           sudo INSTALL_DEPENDENCIES_ROOT=$INSTALL_DEPENDENCIES_ROOT /tmp/install_setup/install_citus_indent.sh
           cp ./scripts/install_setup_system_rows.sh /tmp/install_setup/
-          sudo INSTALL_DEPENDENCIES_ROOT=$INSTALL_DEPENDENCIES_ROOT PGVERSION=$PG_VERSION /tmp/install_setup/install_setup_system_rows.sh
+          sudo INSTALL_DEPENDENCIES_ROOT=$INSTALL_DEPENDENCIES_ROOT IVORYVERSION=$IVORY_VERSION /tmp/install_setup/install_setup_system_rows.sh
           cp ./scripts/install_setup_pg_cron.sh /tmp/install_setup/
-          sudo INSTALL_DEPENDENCIES_ROOT=$INSTALL_DEPENDENCIES_ROOT PGVERSION=$PG_VERSION /tmp/install_setup/install_setup_pg_cron.sh
+          sudo INSTALL_DEPENDENCIES_ROOT=$INSTALL_DEPENDENCIES_ROOT IVORYVERSION=$IVORY_VERSION /tmp/install_setup/install_setup_pg_cron.sh
           cp ./scripts/install_setup_intel_decimal_math_lib.sh /tmp/install_setup/
           sudo INSTALL_DEPENDENCIES_ROOT=$INSTALL_DEPENDENCIES_ROOT /tmp/install_setup/install_setup_intel_decimal_math_lib.sh
           cp ./scripts/install_setup_pcre2.sh /tmp/install_setup/
           sudo INSTALL_DEPENDENCIES_ROOT=$INSTALL_DEPENDENCIES_ROOT /tmp/install_setup/install_setup_pcre2.sh
           cp ./scripts/install_setup_pgvector.sh /tmp/install_setup/
-          sudo INSTALL_DEPENDENCIES_ROOT=$INSTALL_DEPENDENCIES_ROOT PGVERSION=$PG_VERSION /tmp/install_setup/install_setup_pgvector.sh
+          sudo INSTALL_DEPENDENCIES_ROOT=$INSTALL_DEPENDENCIES_ROOT IVORYVERSION=$IVORY_VERSION /tmp/install_setup/install_setup_pgvector.sh
 
           sudo apt-get update
           sudo apt-get install -qy \
@@ -128,17 +126,17 @@ jobs:
           libgeos-dev \
 
           cp ./scripts/install_setup_postgis.sh /tmp/install_setup/
-          sudo INSTALL_DEPENDENCIES_ROOT=$INSTALL_DEPENDENCIES_ROOT PGVERSION=$PG_VERSION /tmp/install_setup/install_setup_postgis.sh
+          sudo INSTALL_DEPENDENCIES_ROOT=$INSTALL_DEPENDENCIES_ROOT IVORYVERSION=$IVORY_VERSION /tmp/install_setup/install_setup_postgis.sh
 
       - name: Export pg_config PATH
         run: |
-          echo "/usr/lib/postgresql/${{ matrix.pg_version }}/bin" >> $GITHUB_PATH
+          echo "/usr/lib/postgresql/${{ matrix.ivory_version }}/bin" >> $GITHUB_PATH
 
       - name: Configure, Build and Install DocumentDB
         run: |
           which pg_config
-          make
-          sudo PATH=$PATH make install
+          env "PATH=/var/local/ivorysql/ivory-4/bin:$PATH" make
+          sudo env "PATH=/var/local/ivorysql/ivory-4/bin:$PATH" make install
 
       - name: Run Tests
         run: |
@@ -147,11 +145,11 @@ jobs:
           export LANGUAGE=en_US
           export LC_COLLATE=en_US.UTF-8
           export LC_CTYPE=en_US.UTF-8
-          make check
+          env "PATH=/var/local/ivorysql/ivory-4/bin:$PATH" make check
 
       - name: Citus Indent
         run: |
-          citus_indent --check || (echo ""; echo "citus_indent failed, refer to CONTRIBUTING.md on how to use citus_indent"; exit 1)
+          env "PATH=/var/local/ivorysql/ivory-4/bin:$PATH" citus_indent --check || (echo ""; echo "citus_indent failed, refer to CONTRIBUTING.md on how to use citus_indent"; exit 1)
 
       - name: Validate sanity of files
         run: |
@@ -161,6 +159,6 @@ jobs:
         if: always() 
         uses: actions/upload-artifact@v4
         with:
-          name: logs_$${{ matrix.runner }}_PG${{ matrix.pg_version }}
+          name: logs_$${{ matrix.runner }}_PG${{ matrix.ivory_version }}
           overwrite: true
           path: "**/*.log"

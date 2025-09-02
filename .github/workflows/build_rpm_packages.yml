@@ -32,9 +32,8 @@ jobs:
         include:
           - arch: amd64
             runner: ubuntu-24.04
-        pg_version:
-          - 16
-          - 17
+        ivory_version:
+          - 4
 
     steps:
       - name: Checkout repository
@@ -50,12 +49,12 @@ jobs:
 
       - name: Build RPM Package
         run: |
-          ./packaging/build_packages.sh --os ${{ matrix.os }} --pg ${{ matrix.pg_version }} --version ${{ env.DOCUMENTDB_VERSION }} --test-clean-install
+          ./packaging/build_packages.sh --os ${{ matrix.os }} --ivy ${{ matrix.ivory_version }} --version ${{ env.DOCUMENTDB_VERSION }} --test-clean-install
 
       - name: Upload RPM Package as Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.os }}-${{ matrix.arch }}-pg${{ matrix.pg_version }}-documentdb-${{ env.DOCUMENTDB_VERSION }}
+          name: ${{ matrix.os }}-${{ matrix.arch }}-pg${{ matrix.ivory_version }}-documentdb-${{ env.DOCUMENTDB_VERSION }}
           path: |
             packaging/*.rpm
           retention-days: 7
