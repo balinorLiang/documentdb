@@ -38,9 +38,8 @@ jobs:
             runner: ubuntu-24.04
           - arch: arm64
             runner: ubuntu-24.04-arm
-        pg_version:
-          - 16
-          - 17
+        ivory_version:
+          - 4
 
     steps:
       - name: Checkout repository
@@ -56,12 +55,12 @@ jobs:
 
       - name: Build Debian Package
         run: |
-          ./packaging/build_packages.sh --os ${{ matrix.os }} --pg ${{ matrix.pg_version }} --version ${{ env.DOCUMENTDB_VERSION }}
+          ./packaging/build_packages.sh --os ${{ matrix.os }} --ivy ${{ matrix.ivory_version }} --version ${{ env.DOCUMENTDB_VERSION }}
 
       - name: Upload Debian Package as Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: archive-${{ matrix.os }}-${{ matrix.arch }}-pg${{ matrix.pg_version }}-documentdb-${{ env.DOCUMENTDB_VERSION }}
+          name: archive-${{ matrix.os }}-${{ matrix.arch }}-pg${{ matrix.ivory_version }}-documentdb-${{ env.DOCUMENTDB_VERSION }}
           path: |
             packaging/*.deb
           retention-days: 7
@@ -121,10 +120,10 @@ jobs:
           push: true
           platforms: linux/${{ matrix.arch }}
           file: .github/containers/Build-Ubuntu/Dockerfile_prebuild
-          tags: ghcr.io/${{ github.repository }}/documentdb-oss:PG${{ matrix.pg_version }}-${{ matrix.arch }}-${{ env.DOCUMENTDB_VERSION }}
+          tags: ghcr.io/${{ github.repository }}/documentdb-oss:PG${{ matrix.ivory_version }}-${{ matrix.arch }}-${{ env.DOCUMENTDB_VERSION }}
           build-args: |
             BASE_IMAGE=${{ env.BASE_IMAGE }}
-            POSTGRES_VERSION=${{ matrix.pg_version }}
+            IVORY_VERSION=${{ matrix.ivory_version }}
             DEB_PACKAGE_REL_PATH=${{ env.PACKAGE_NAME }}
           labels: |
             org.opencontainers.image.source=https://github.com/microsoft/documentdb
@@ -138,7 +137,7 @@ jobs:
       - name: Sign manifest (keyless)
         if: startsWith(github.ref, 'refs/tags/')
         run: |
-          cosign sign ghcr.io/${{ github.repository }}/documentdb-oss:PG${{ matrix.pg_version }}-${{ matrix.arch }}-${{ env.DOCUMENTDB_VERSION }} -y
+          cosign sign ghcr.io/${{ github.repository }}/documentdb-oss:PG${{ matrix.ivory_version }}-${{ matrix.arch }}-${{ env.DOCUMENTDB_VERSION }} -y
       
       - name: Verify manifest signature (keyless)
         if: startsWith(github.ref, 'refs/tags/')
@@ -147,4 +146,4 @@ jobs:
           cosign verify \
             --certificate-identity-regexp "https://github.com/${{ github.repository }}/.github/workflows/build_packages.yml@refs/(heads|tags)/${{ github.ref_name }}" \
             --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
-            ghcr.io/${{ github.repository }}/documentdb-oss:PG${{ matrix.pg_version }}-${{ matrix.arch }}-${{ env.DOCUMENTDB_VERSION }}
+            ghcr.io/${{ github.repository }}/documentdb-oss:PG${{ matrix.ivory_version }}-${{ matrix.arch }}-${{ env.DOCUMENTDB_VERSION }}

@@ -1,6 +1,6 @@
 CREATE SCHEMA documentdb_test_helpers;
 
-SELECT datname, datcollate, datctype, pg_encoding_to_char(encoding), datlocprovider FROM pg_database;
+SELECT datname, datcollate, datctype, pg_encoding_to_char(encoding), datlocprovider FROM pg_database where datname <> 'ivorysql' ORDER BY datname;
 
 -- Check if recreating the extension works
 DROP EXTENSION IF EXISTS documentdb;

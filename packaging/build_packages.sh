@@ -49,11 +49,11 @@ while [[ $# -gt 0 ]]; do
                     ;;
             esac
             ;;
-        --pg)
+        --ivy)
             shift
             case $1 in
-                15|16|17)
-                    PG=$1
+                2|3|4)
+                    PG=$(($1+13))
                     ;;
                 *)
                     echo "Invalid --pg value. Allowed values are [15, 16, 17]"
