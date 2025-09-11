@@ -8,7 +8,7 @@ set -e
 # declare all the versions of dependencies
 LIBBSON_VERSION=1.28.0
 # This maps to REL_17_4:f8554dee417ffc4540c94cf357f7bf7d4b6e5d80
-IvorySQL_4_REF="IvorySQL_4.5"
+IvorySQL_4_REF="IvorySQL_4.6"
 # This maps to REL_16_8:71eb35c0b18de96537bd3876ec9bf8075bfd484f
 IvorySQL_3_REF="IvorySQL_3.4"
 # This maps to REL15_12:50d3d22baba63613d1f1406b2ed460dc9b03c3fc
